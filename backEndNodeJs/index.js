@@ -37,5 +37,15 @@ app.get("/notes", (req, res) => {
   res.json(notes);
 });
 
+app.get("/notes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const selectedNote = notes.find(note => note.id === id);
+  if (selectedNote) {
+    res.json(selectedNote);
+  } else {
+    res.status(404).send("Selected note not found!");
+  }
+});
+
 app.listen(PORT);
 console.log(`Server running on port ${PORT}`);
