@@ -5,13 +5,7 @@ const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 var morgan = require("morgan");
 
-let notes = [
-  {
-    id: 1,
-    name: "Mummy",
-    number: "97959402"
-  }
-];
+let notes = [];
 
 app.use(bodyParser.json());
 app.use(cors());
