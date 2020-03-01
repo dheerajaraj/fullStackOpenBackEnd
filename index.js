@@ -15,6 +15,7 @@ let notes = [
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static("build"));
 app.use(
   morgan(function(tokens, req, res) {
     return [
@@ -29,6 +30,7 @@ app.use(
     ].join(" ");
   })
 );
+
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
