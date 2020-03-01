@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const PORT = 3001;
+var morgan = require("morgan");
+
 let notes = [
   {
     id: 1,
@@ -10,6 +12,7 @@ let notes = [
   }
 ];
 app.use(bodyParser.json());
+app.use(morgan("tiny"));
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
