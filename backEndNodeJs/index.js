@@ -1,26 +1,15 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 const PORT = 3001;
 let notes = [
   {
     id: 1,
-    content: "HTML is easy",
-    date: "2019-05-30T17:30:31.098Z",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only Javascript",
-    date: "2019-05-30T18:39:34.091Z",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    date: "2019-05-30T19:20:14.298Z",
-    important: true
+    name: "Mummy",
+    number: "97959402"
   }
 ];
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
@@ -45,6 +34,40 @@ app.get("/notes/:id", (req, res) => {
   } else {
     res.status(404).send("Selected note not found!");
   }
+});
+
+app.delete("/notes/:id", (req, res) => {
+  const id = Number(req.params.id);
+  notes = notes.filter(note => note.id !== id);
+  res.status(204).end();
+});
+
+app.post("/notes", (req, res) => {
+  const note = req.body;
+  console.log("notes: " + note);
+
+  if (!note.name) {
+    return res.status(400).json({
+      error: "name missing"
+    });
+  }
+  const nameExists = notes.find(entry => entry.name === note.name);
+  if (nameExists) {
+    return res.status(400).json({
+      error: "name exists, name must be unique"
+    });
+  }
+
+  if (!note.number) {
+    return res.status(400).json({
+      error: "number missing"
+    });
+  }
+
+  const idGen = Math.floor(Math.random() * 1000000);
+  note.id = idGen;
+  notes = notes.concat(note);
+  res.json(note);
 });
 
 app.listen(PORT);
