@@ -2,10 +2,13 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const PORT = process.env.PORT || 3001;
+const dotenv = require("dotenv");
+dotenv.config();
+const PORT = process.env.PORT;
 var morgan = require("morgan");
 
 let notes = [];
+const PhoneBook = require("./ModelConfig");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -37,17 +40,16 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-  res.json(notes);
+  PhoneBook.find({}).then(phoneList => {
+    res.json(phoneList.map(phone => phone.toJSON()));
+  });
 });
 
 app.get("/api/notes/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const selectedNote = notes.find(note => note.id === id);
-  if (selectedNote) {
-    res.json(selectedNote);
-  } else {
-    res.status(404).send("Selected note not found!");
-  }
+  const id = req.params.id;
+  PhoneBook.findById(id).then(selectedEntry => {
+    res.json(selectedEntry.toJSON());
+  });
 });
 
 app.delete("/api/notes/:id", (req, res) => {
@@ -78,10 +80,13 @@ app.post("/api/notes", (req, res) => {
     });
   }
 
-  const idGen = Math.floor(Math.random() * 1000000);
-  note.id = idGen;
-  notes = notes.concat(note);
-  res.json(note);
+  const phoneEntry = new PhoneBook({
+    name: note.name,
+    number: note.number
+  });
+  phoneEntry.save().then(savedEntry => {
+    res.json(savedEntry.toJSON());
+  });
 });
 
 app.listen(PORT, () => {
