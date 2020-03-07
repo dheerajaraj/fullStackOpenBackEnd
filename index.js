@@ -53,9 +53,15 @@ app.get("/api/notes/:id", (req, res) => {
 });
 
 app.delete("/api/notes/:id", (req, res) => {
-  const id = Number(req.params.id);
-  notes = notes.filter(note => note.id !== id);
-  res.status(204).end();
+  const id = req.params.id;
+  PhoneBook.findByIdAndDelete(id)
+    .then(() => {
+      res.status(204).end();
+    })
+    .catch(error => {
+      res.status(400).end();
+    });
+  //notes = notes.filter(note => note.id !== id);
 });
 
 app.post("/api/notes", (req, res) => {
