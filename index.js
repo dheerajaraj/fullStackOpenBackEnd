@@ -47,15 +47,22 @@ app.get("/api/notes", (req, res) => {
 
 app.get("/api/notes/:id", (req, res) => {
   const id = req.params.id;
-  PhoneBook.findById(id).then(selectedEntry => {
-    res.json(selectedEntry.toJSON());
-  });
+  PhoneBook.findById(id)
+    .then(selectedEntry => {
+      if (selectedEntry) res.json(selectedEntry.toJSON());
+      else {
+        response.status(404).end();
+      }
+    })
+    .catch(error => {
+      response.status(400).send({ error: "malformatted id" });
+    });
 });
 
 app.delete("/api/notes/:id", (req, res) => {
   const id = req.params.id;
   PhoneBook.findByIdAndDelete(id)
-    .then(() => {
+    .then(result => {
       res.status(204).end();
     })
     .catch(error => {
