@@ -9,7 +9,6 @@ var morgan = require("morgan");
 
 let notes = [];
 const PhoneBook = require("./ModelConfig");
-
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static("build"));
@@ -27,7 +26,6 @@ app.use(
     ].join(" ");
   })
 );
-
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
 });
@@ -45,7 +43,7 @@ app.get("/api/notes", (req, res) => {
   });
 });
 
-app.get("/api/notes/:id", (req, res) => {
+app.get("/api/notes/:id", (req, res, next) => {
   const id = req.params.id;
   PhoneBook.findById(id)
     .then(selectedEntry => {
@@ -54,20 +52,16 @@ app.get("/api/notes/:id", (req, res) => {
         response.status(404).end();
       }
     })
-    .catch(error => {
-      response.status(400).send({ error: "malformatted id" });
-    });
+    .catch(error => next(error));
 });
 
-app.delete("/api/notes/:id", (req, res) => {
+app.delete("/api/notes/:id", (req, res, next) => {
   const id = req.params.id;
   PhoneBook.findByIdAndDelete(id)
     .then(result => {
       res.status(204).end();
     })
-    .catch(error => {
-      res.status(400).end();
-    });
+    .catch(error => next(error));
   //notes = notes.filter(note => note.id !== id);
 });
 
@@ -101,6 +95,20 @@ app.post("/api/notes", (req, res) => {
     res.json(savedEntry.toJSON());
   });
 });
+
+//This error handler needs to be declared at the end! If not it will
+// not work as it will route to different react routers.
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError" && error.kind == "ObjectId") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
