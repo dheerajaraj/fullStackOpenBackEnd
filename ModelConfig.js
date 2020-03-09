@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+var uniqueValidator = require("mongoose-unique-validator");
+
 dotenv.config();
 
 const url = process.env.MONGO_DB_URL;
@@ -15,8 +17,18 @@ mongoose
   });
 
 const phoneSchema = new mongoose.Schema({
-  name: String,
-  number: String
+  name: {
+    type: String,
+    required: [true, "You don't have a name?"],
+    unique: [true, "Record already exists! Duplicate name found!"],
+    minlength: 3
+  },
+  number: {
+    type: Number,
+    required: [true, "Please enter your number"],
+    min: 8,
+    unique: [true, "Number already exists for another user!"]
+  }
 });
 
 phoneSchema.set("toJSON", {
@@ -26,4 +38,5 @@ phoneSchema.set("toJSON", {
     delete returnedObject.__v;
   }
 });
+phoneSchema.plugin(uniqueValidator);
 module.exports = mongoose.model("PhoneBook", phoneSchema);
