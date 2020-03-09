@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const app = express();
 if (app.get("env") == "development") {
   require("dotenv").config();
 }
