@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
+if (app.get("env") == "development") {
+  require("dotenv").config();
+}
 const PORT = process.env.PORT;
 var morgan = require("morgan");
 
