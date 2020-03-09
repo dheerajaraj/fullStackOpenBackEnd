@@ -31,10 +31,15 @@ app.get("/", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  var dateNow = new Date();
-  var htmlResponse =
-    "<p> Notes has info for " + notes.length + " entries </p>" + dateNow;
-  res.send(htmlResponse);
+  PhoneBook.collection.count({}, function(error, numOfDocs) {
+    if (error) {
+      return res.status(404).json({
+        error: "no records found"
+      });
+    }
+    var htmlResponse = "<p> Notes has info for " + numOfDocs + " entries </p>";
+    res.send(htmlResponse);
+  });
 });
 
 app.get("/api/notes", (req, res) => {
