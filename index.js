@@ -7,7 +7,6 @@ dotenv.config();
 const PORT = process.env.PORT;
 var morgan = require("morgan");
 
-let notes = [];
 const PhoneBook = require("./ModelConfig");
 app.use(bodyParser.json());
 app.use(cors());
@@ -44,7 +43,7 @@ app.get("/info", (req, res) => {
 
 app.get("/api/notes", (req, res) => {
   PhoneBook.find({}).then(phoneList => {
-    notes = phoneList.map(phone => phone.toJSON());
+    let notes = phoneList.map(phone => phone.toJSON());
     res.json(notes);
   });
 });
@@ -68,41 +67,25 @@ app.delete("/api/notes/:id", (req, res, next) => {
       res.status(204).end();
     })
     .catch(error => next(error));
-  //notes = notes.filter(note => note.id !== id);
 });
 
 app.post("/api/notes", (req, res, next) => {
   const note = req.body;
   console.log("notes: " + note);
 
-  if (!note.name) {
-    return res.status(400).json({
-      error: "name missing"
-    });
-  }
-  PhoneBook.find({});
-  const nameExists = notes.find(entry => entry.name === note.name);
-  if (nameExists) {
-    next(
-      res.status(400).json({
-        error: "name exists, name must be unique"
-      })
-    );
-  }
-
-  if (!note.number) {
-    return res.status(400).json({
-      error: "number missing"
-    });
-  }
-
   const phoneEntry = new PhoneBook({
     name: note.name,
     number: note.number
   });
-  phoneEntry.save().then(savedEntry => {
-    res.json(savedEntry.toJSON());
-  });
+  phoneEntry
+    .save()
+    .then(savedEntry => {
+      return savedEntry.toJSON();
+    })
+    .then(formattedNote => {
+      res.json(formattedNote);
+    })
+    .catch(error => next(error));
 });
 
 app.put("/api/notes/:id", (req, res, next) => {
@@ -124,6 +107,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError" && error.kind == "ObjectId") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name == "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
   next(error);
 };
