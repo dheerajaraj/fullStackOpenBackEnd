@@ -39,7 +39,8 @@ app.get("/info", (req, res) => {
 
 app.get("/api/notes", (req, res) => {
   PhoneBook.find({}).then(phoneList => {
-    res.json(phoneList.map(phone => phone.toJSON()));
+    notes = phoneList.map(phone => phone.toJSON());
+    res.json(notes);
   });
 });
 
@@ -65,7 +66,7 @@ app.delete("/api/notes/:id", (req, res, next) => {
   //notes = notes.filter(note => note.id !== id);
 });
 
-app.post("/api/notes", (req, res) => {
+app.post("/api/notes", (req, res, next) => {
   const note = req.body;
   console.log("notes: " + note);
 
@@ -74,11 +75,14 @@ app.post("/api/notes", (req, res) => {
       error: "name missing"
     });
   }
+  PhoneBook.find({});
   const nameExists = notes.find(entry => entry.name === note.name);
   if (nameExists) {
-    return res.status(400).json({
-      error: "name exists, name must be unique"
-    });
+    next(
+      res.status(400).json({
+        error: "name exists, name must be unique"
+      })
+    );
   }
 
   if (!note.number) {
@@ -96,6 +100,18 @@ app.post("/api/notes", (req, res) => {
   });
 });
 
+app.put("/api/notes/:id", (req, res, next) => {
+  const note = req.body;
+  PhoneBook.updateOne(
+    { name: note.name },
+    { $set: { number: note.number }, $currentDate: { lastModified: true } }
+  )
+    .then(savedEntry => {
+      res.status(200).end();
+    })
+    .catch(error => next(error));
+});
+
 //This error handler needs to be declared at the end! If not it will
 // not work as it will route to different react routers.
 const errorHandler = (error, request, response, next) => {
@@ -104,7 +120,6 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError" && error.kind == "ObjectId") {
     return response.status(400).send({ error: "malformatted id" });
   }
-
   next(error);
 };
 
