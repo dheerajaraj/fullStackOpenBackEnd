@@ -1,8 +1,8 @@
-const phoneRouter = require("express").Router();
-const PhoneBook = require("../models/PhoneBook");
+const blogRouter = require("express").Router();
+const Blog = require("../models/Blog");
 
-phoneRouter.get("/info", (req, res) => {
-  PhoneBook.collection.count({}, function(error, numOfDocs) {
+blogRouter.get("/info", (req, res) => {
+  Blog.collection.count({}, function(error, numOfDocs) {
     if (error) {
       return res.status(404).json({
         error: "no records found"
@@ -13,16 +13,16 @@ phoneRouter.get("/info", (req, res) => {
   });
 });
 
-phoneRouter.get("/", (req, res) => {
-  PhoneBook.find({}).then(phoneList => {
+blogRouter.get("/", (req, res) => {
+  Blog.find({}).then(phoneList => {
     let notes = phoneList.map(phone => phone.toJSON());
     res.json(notes);
   });
 });
 
-phoneRouter.get("/:id", (req, res, next) => {
+blogRouter.get("/:id", (req, res, next) => {
   const id = req.params.id;
-  PhoneBook.findById(id)
+  Blog.findById(id)
     .then(selectedEntry => {
       if (selectedEntry) res.json(selectedEntry.toJSON());
       else {
@@ -32,22 +32,24 @@ phoneRouter.get("/:id", (req, res, next) => {
     .catch(error => next(error));
 });
 
-phoneRouter.delete("/:id", (req, res, next) => {
+blogRouter.delete("/:id", (req, res, next) => {
   const id = req.params.id;
-  PhoneBook.findByIdAndDelete(id)
+  Blog.findByIdAndDelete(id)
     .then(result => {
       res.status(204).end();
     })
     .catch(error => next(error));
 });
 
-phoneRouter.post("/", (req, res, next) => {
+blogRouter.post("/", (req, res, next) => {
   const note = req.body;
   console.log("notes: " + note);
 
-  const phoneEntry = new PhoneBook({
-    name: note.name,
-    number: note.number
+  const phoneEntry = new Blog({
+    title: note.title,
+    author: note.author,
+    url: note.url,
+    likes: note.likes
   });
   phoneEntry
     .save()
@@ -60,11 +62,14 @@ phoneRouter.post("/", (req, res, next) => {
     .catch(error => next(error));
 });
 
-phoneRouter.put("/:id", (req, res, next) => {
+blogRouter.put("/:id", (req, res, next) => {
   const note = req.body;
-  PhoneBook.updateOne(
-    { name: note.name },
-    { $set: { number: note.number }, $currentDate: { lastModified: true } }
+  Blog.updateOne(
+    { title: note.title },
+    {
+      $set: { author: note.author, url: note.url, likes: notes.likes },
+      $currentDate: { lastModified: true }
+    }
   )
     .then(savedEntry => {
       res.status(200).end();
@@ -72,4 +77,4 @@ phoneRouter.put("/:id", (req, res, next) => {
     .catch(error => next(error));
 });
 
-module.exports = phoneRouter;
+module.exports = blogRouter;

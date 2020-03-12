@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const phoneRouter = require("./controllers/phoneRouter");
+const blogRouter = require("./controllers/BlogRouter");
 const mongoose = require("mongoose");
 const middleware = require("./utils/middleware");
 const config = require("./utils/config");
@@ -35,7 +35,7 @@ app.use(
     ].join(" ");
   })
 );
-app.use("/api/phones", phoneRouter);
+app.use("/api/blogs", blogRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
