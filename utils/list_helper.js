@@ -16,8 +16,38 @@ const getBlogWithMostLikes = blogs => {
   return blogs.find(blog => blog.likes === maxLikes);
 };
 
+const getAuthorWithMostLikes = blogs => {
+  const blog = getBlogWithMostLikes(blogs);
+  return {
+    author: blog.author,
+    likes: blog.likes
+  };
+};
+
+const getAuthorWithMostNumberOfBlogs = blogs => {
+  let group = blogs.reduce((total, curr) => {
+    total[curr.author] =
+      curr.author in total == true ? total[curr.author] + 1 : 1;
+    return total;
+  }, {});
+  const arrGroup = Object.values(group);
+  const arrEntries = Object.keys(group);
+  maxCount = Math.max.apply(Math, arrGroup);
+  finalResult = {};
+  arrEntries.forEach((item, index) => {
+    if (group[item] == maxCount) {
+      finalResult = {
+        author: item,
+        count: maxCount
+      };
+    }
+  });
+  return finalResult;
+};
 module.exports = {
   dummy: dummy,
   totalLikes: totalLikes,
-  getBlogWithMostLikes: getBlogWithMostLikes
+  getBlogWithMostLikes: getBlogWithMostLikes,
+  getAuthorWithMostLikes: getAuthorWithMostLikes,
+  getAuthorWithMostNumberOfBlogs: getAuthorWithMostNumberOfBlogs
 };
