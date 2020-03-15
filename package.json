@@ -9,20 +9,26 @@
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m \"uibuild\" && npm run deploy",
     "logs:prod": "heroku logs --tail",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/jest": "^25.1.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "mongoose": "^5.9.3",
     "mongoose-unique-validator": "^2.0.3",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "plotly.js-dist": "^1.52.3"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.19.0",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2"
   }
