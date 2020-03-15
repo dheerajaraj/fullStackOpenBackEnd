@@ -9,7 +9,15 @@ const totalLikes = blogs => {
   return blogs.reduce(getTotalLikes, null);
 };
 
+const getBlogWithMostLikes = blogs => {
+  const maxLikes = Math.max.apply(Math, blogs.map(blog => blog.likes));
+  console.log("Max likes is: ");
+  console.log(maxLikes);
+  return blogs.find(blog => blog.likes === maxLikes);
+};
+
 module.exports = {
   dummy: dummy,
-  totalLikes: totalLikes
+  totalLikes: totalLikes,
+  getBlogWithMostLikes: getBlogWithMostLikes
 };
