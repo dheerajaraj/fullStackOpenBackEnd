@@ -13,37 +13,34 @@ blogRouter.get("/info", (req, res) => {
   });
 });
 
-blogRouter.get("/", (req, res) => {
-  Blog.find({}).then(phoneList => {
-    let notes = phoneList.map(phone => phone.toJSON());
-    res.json(notes);
-  });
+blogRouter.get("/", async (req, res) => {
+  const phoneList = await Blog.find({});
+  let notes = phoneList.map(phone => phone.toJSON());
+  res.json(notes);
 });
 
-blogRouter.get("/:id", (req, res, next) => {
+blogRouter.get("/:id", async (req, res, next) => {
   const id = req.params.id;
-  Blog.findById(id)
-    .then(selectedEntry => {
-      if (selectedEntry) res.json(selectedEntry.toJSON());
-      else {
-        response.status(404).end();
-      }
-    })
-    .catch(error => next(error));
+  try {
+    selectedEntry = await Blog.findById(id);
+    res.json(selectedEntry.toJSON());
+  } catch (exception) {
+    next(exception);
+  }
 });
 
-blogRouter.delete("/:id", (req, res, next) => {
+blogRouter.delete("/:id", async (req, res, next) => {
   const id = req.params.id;
-  Blog.findByIdAndDelete(id)
-    .then(result => {
-      res.status(204).end();
-    })
-    .catch(error => next(error));
+  try {
+    result = await Blog.findByIdAndDelete(id);
+    res.status(204).end();
+  } catch (exp) {
+    next(exp);
+  }
 });
 
-blogRouter.post("/", (req, res, next) => {
+blogRouter.post("/", async (req, res, next) => {
   const note = req.body;
-  console.log("notes: " + note);
 
   const phoneEntry = new Blog({
     title: note.title,
@@ -51,15 +48,13 @@ blogRouter.post("/", (req, res, next) => {
     url: note.url,
     likes: note.likes
   });
-  phoneEntry
-    .save()
-    .then(savedEntry => {
-      return savedEntry.toJSON();
-    })
-    .then(formattedNote => {
-      res.json(formattedNote);
-    })
-    .catch(error => next(error));
+
+  try {
+    savedEntry = await phoneEntry.save();
+    return res.json(savedEntry.toJSON());
+  } catch (exception) {
+    next(exception);
+  }
 });
 
 blogRouter.put("/:id", (req, res, next) => {

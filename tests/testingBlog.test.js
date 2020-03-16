@@ -2,6 +2,7 @@ const totalLikes = require("../utils/list_helper").totalLikes;
 const popularBlog = require("../utils/list_helper").getBlogWithMostLikes;
 const popularAuthor = require("../utils/list_helper")
   .getAuthorWithMostNumberOfBlogs;
+
 describe("Total likes", () => {
   const listWithOneBlog = [
     {
