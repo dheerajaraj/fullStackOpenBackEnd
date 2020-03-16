@@ -121,6 +121,21 @@ test("delete a blog entry", async () => {
   expect(title).not.toContain(blog.title);
 });
 
+test("Update a blog entry", async () => {
+  const blogList = await helper.getAllBlogsInDB();
+  const blog = blogList[0];
+  var updatedData = Object.assign({}, blog);
+  updatedData.author = "modified author";
+  console.log(updatedData);
+  await api
+    .put(`/api/blogs/${blog.id}`)
+    .send(updatedData)
+    .expect(200);
+
+  response = await api.get(`/api/blogs/${blog.id}`);
+  expect(response.body.author).toBe("modified author");
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });

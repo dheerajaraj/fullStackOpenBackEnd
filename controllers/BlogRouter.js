@@ -57,19 +57,20 @@ blogRouter.post("/", async (req, res, next) => {
   }
 });
 
-blogRouter.put("/:id", (req, res, next) => {
+blogRouter.put("/:id", async (req, res, next) => {
   const note = req.body;
-  Blog.updateOne(
-    { title: note.title },
-    {
-      $set: { author: note.author, url: note.url, likes: notes.likes },
-      $currentDate: { lastModified: true }
-    }
-  )
-    .then(savedEntry => {
-      res.status(200).end();
-    })
-    .catch(error => next(error));
+  try {
+    savedEntry = await Blog.updateOne(
+      { title: note.title },
+      {
+        $set: { author: note.author, url: note.url, likes: note.likes },
+        $currentDate: { lastModified: true }
+      }
+    );
+    res.status(200).end();
+  } catch (exception) {
+    next(exception);
+  }
 });
 
 module.exports = blogRouter;
