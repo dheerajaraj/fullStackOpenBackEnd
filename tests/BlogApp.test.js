@@ -59,7 +59,7 @@ test("a valid note can be added ", async () => {
   );
 });
 
-test("a valid note can be added ", async () => {
+test("a valid note without like ", async () => {
   const newNote = {
     title: "corona virus and its impact on economy",
     author: "famous economist",
@@ -68,6 +68,15 @@ test("a valid note can be added ", async () => {
 
   response = await api.post("/api/blogs").send(newNote);
   expect(response.body.likes).toBe(0);
+});
+
+test("an invalid note without title and url ", async () => {
+  const newNote = {
+    author: "famous economist"
+  };
+
+  response = await api.post("/api/blogs").send(newNote);
+  expect(response.status).toBe(400);
 });
 
 test("note without content is not added", async () => {
