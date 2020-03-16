@@ -45,11 +45,9 @@ test("a valid note can be added ", async () => {
     likes: 5
   };
 
-  await api
-    .post("/api/blogs")
-    .send(newNote)
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
+  response = await api.post("/api/blogs").send(newNote);
+  expect(response.body.id).toBeDefined();
+  expect(response.status).toBe(200);
 
   const blogsTotal = await helper.getAllBlogsInDB();
   expect(blogsTotal.length).toBe(helper.listOfTestBlogs.length + 1);
