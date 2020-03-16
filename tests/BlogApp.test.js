@@ -59,6 +59,17 @@ test("a valid note can be added ", async () => {
   );
 });
 
+test("a valid note can be added ", async () => {
+  const newNote = {
+    title: "corona virus and its impact on economy",
+    author: "famous economist",
+    url: "www.google.com"
+  };
+
+  response = await api.post("/api/blogs").send(newNote);
+  expect(response.body.likes).toBe(0);
+});
+
 test("note without content is not added", async () => {
   const newNote = {
     likes: 11
