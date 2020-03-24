@@ -1,3 +1,5 @@
+const User = require("../models/user");
+
 const dummy = blogs => {
   return 1;
 };
@@ -44,10 +46,17 @@ const getAuthorWithMostNumberOfBlogs = blogs => {
   });
   return finalResult;
 };
+
+const usersInDB = async () => {
+  const users = await User.find({});
+  return users.map(user => user.toJSON());
+};
+
 module.exports = {
   dummy: dummy,
   totalLikes: totalLikes,
   getBlogWithMostLikes: getBlogWithMostLikes,
   getAuthorWithMostLikes: getAuthorWithMostLikes,
-  getAuthorWithMostNumberOfBlogs: getAuthorWithMostNumberOfBlogs
+  getAuthorWithMostNumberOfBlogs: getAuthorWithMostNumberOfBlogs,
+  usersInDB
 };
