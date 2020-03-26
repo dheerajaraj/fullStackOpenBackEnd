@@ -1,5 +1,6 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/Blog");
+const User = require("../models/User");
 
 blogRouter.get("/info", (req, res) => {
   Blog.collection.count({}, function(error, numOfDocs) {
@@ -14,7 +15,7 @@ blogRouter.get("/info", (req, res) => {
 });
 
 blogRouter.get("/", async (req, res) => {
-  const phoneList = await Blog.find({});
+  const phoneList = await Blog.find({}).populate("user");
   let notes = phoneList.map(phone => phone.toJSON());
   res.json(notes);
 });
@@ -41,16 +42,19 @@ blogRouter.delete("/:id", async (req, res, next) => {
 
 blogRouter.post("/", async (req, res, next) => {
   const note = req.body;
-
-  const phoneEntry = new Blog({
+  const user = await User.findById(note.userId);
+  const newEntry = new Blog({
     title: note.title,
     author: note.author,
     url: note.url,
-    likes: note.likes
+    likes: note.likes,
+    user: user._id
   });
-
   try {
-    savedEntry = await phoneEntry.save();
+    const savedEntry = await newEntry.save();
+
+    user.blogs = user.blogs.concat(savedEntry._id);
+    await user.save();
     return res.json(savedEntry.toJSON());
   } catch (exception) {
     next(exception);
