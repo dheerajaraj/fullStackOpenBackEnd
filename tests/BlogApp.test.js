@@ -44,8 +44,18 @@ test("a valid note can be added ", async () => {
     url: "www.google.com",
     likes: 5
   };
-
-  response = await api.post("/api/blogs").send(newNote);
+  const loginCredentials = {
+    username: "dheerajaraj",
+    password: "Periyavame1994!"
+  };
+  loginResponse = await api.post("/api/login").send(loginCredentials);
+  jwtToken = loginResponse.token;
+  console.log("Login Response");
+  console.log(loginResponse);
+  response = await api
+    .post("/api/blogs")
+    .set("Authorization", jwtToken)
+    .send(newNote);
   expect(response.body.id).toBeDefined();
   expect(response.status).toBe(200);
 
