@@ -9,6 +9,14 @@ const requestLogger = (request, response, next) => {
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
+
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer")) {
+    request.token = authorization.substring(7);
+  }
+  return next();
+};
 //This error handler needs to be declared at the end! If not it will
 // not work as it will route to different react routers.
 const errorHandler = (error, request, response, next) => {
@@ -25,5 +33,6 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
   requestLogger,
   unknownEndpoint,
+  tokenExtractor,
   errorHandler
 };

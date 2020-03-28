@@ -3,14 +3,6 @@ const jwt = require("jsonwebtoken");
 const Blog = require("../models/Blog");
 const User = require("../models/User");
 
-const getTokenFrom = request => {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.toLowerCase().startsWith("bearer")) {
-    return authorization.substring(7);
-  }
-  return null;
-};
-
 blogRouter.get("/info", (req, res) => {
   Blog.collection.count({}, function(error, numOfDocs) {
     if (error) {
@@ -51,9 +43,8 @@ blogRouter.delete("/:id", async (req, res, next) => {
 
 blogRouter.post("/", async (req, res, next) => {
   const note = req.body;
-  const token = getTokenFrom(req);
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!token || !decodedToken.id) {
+  const decodedToken = jwt.verify(req.token, process.env.SECRET);
+  if (!req.token || !decodedToken.id) {
     return res
       .status(401)
       .json({ error: "token missing or token with invalid token id" });
