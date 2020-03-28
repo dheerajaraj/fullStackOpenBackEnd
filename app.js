@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const middleware = require("./utils/middleware");
 const config = require("./utils/config");
 const usersRouter = require("./controllers/UserRouter");
+const loginRouter = require("./controllers/login");
 const url = config.MONGO_DB_URL;
 var morgan = require("morgan");
 
@@ -38,6 +39,7 @@ app.use(
 );
 app.use("/api/blogs", blogRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/login", loginRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
