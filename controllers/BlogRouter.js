@@ -33,7 +33,13 @@ blogRouter.get("/:id", async (req, res, next) => {
 
 blogRouter.delete("/:id", async (req, res, next) => {
   const id = req.params.id;
+  const decodedToken = jwt.verify(req.token, process.env.SECRET);
   try {
+    retrievedBlog = await Blog.findById(id);
+    accessedUserId = retrievedBlog.user;
+    if (decodedToken.id.toString() !== accessedUserId.toString()) {
+      return res.status(401).send({ error: "Unauthorized to delete!" });
+    }
     result = await Blog.findByIdAndDelete(id);
     res.status(204).end();
   } catch (exp) {
