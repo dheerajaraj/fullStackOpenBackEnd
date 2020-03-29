@@ -55,17 +55,16 @@ blogRouter.post("/", async (req, res, next) => {
       .status(401)
       .json({ error: "token missing or token with invalid token id" });
   }
-  const user = await User.findById(note.userId);
+  const user = await User.findById(decodedToken.id);
   const newEntry = new Blog({
     title: note.title,
     author: note.author,
     url: note.url,
     likes: note.likes,
-    user: user._id
+    user: decodedToken.id
   });
   try {
     const savedEntry = await newEntry.save();
-
     user.blogs = user.blogs.concat(savedEntry._id);
     await user.save();
     return res.json(savedEntry.toJSON());
