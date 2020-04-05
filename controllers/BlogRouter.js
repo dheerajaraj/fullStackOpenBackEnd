@@ -2,6 +2,7 @@ const blogRouter = require("express").Router();
 const jwt = require("jsonwebtoken");
 const Blog = require("../models/Blog");
 const User = require("../models/User");
+var ObjectId = require("mongodb").ObjectID;
 
 blogRouter.get("/info", (req, res) => {
   Blog.collection.count({}, function(error, numOfDocs) {
@@ -75,12 +76,26 @@ blogRouter.post("/", async (req, res, next) => {
 
 blogRouter.put("/:id", async (req, res, next) => {
   const note = req.body;
+  const decodedToken = jwt.verify(req.token, process.env.SECRET);
+  if (!req.token || !decodedToken.id) {
+    return res.status(401).json({
+      error: "token missing or token with invalid token id"
+    });
+  }
+  const newEntry = new Blog({
+    title: note.title,
+    author: note.author,
+    url: note.url,
+    likes: note.likes,
+    id: note.id
+  });
   try {
-    savedEntry = await Blog.updateOne(
-      { title: note.title },
+    savedEntry = await Blog.update(
+      { _id: ObjectId(note.id) },
       {
-        $set: { author: note.author, url: note.url, likes: note.likes },
-        $currentDate: { lastModified: true }
+        author: note.author,
+        url: note.url,
+        likes: note.likes
       }
     );
     res.status(200).end();
