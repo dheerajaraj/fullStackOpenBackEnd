@@ -18,7 +18,7 @@ const menuSchema = new mongoose.Schema({
 });
 
 menuSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
+  transform: (returnedObject: any) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
@@ -26,4 +26,4 @@ menuSchema.set("toJSON", {
 });
 
 menuSchema.plugin(uniqueValidator);
-module.exports = mongoose.model("Menu", menuSchema);
+export default mongoose.model("Menu", menuSchema);

@@ -13,20 +13,16 @@ const restSchema = new mongoose.Schema({
   restRatings: {
     type: Number,
     required: false
-  },
-  menuId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Menu"
   }
 });
 
-menuSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
+restSchema.set("toJSON", {
+  transform: (returnedObject: any) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
   }
 });
 
-menuSchema.plugin(uniqueValidator);
+restSchema.plugin(uniqueValidator);
 module.exports = mongoose.model("Restaurant", restSchema);

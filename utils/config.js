@@ -6,9 +6,11 @@ if (process.env.NODE_ENV === "test") {
 }
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 const RADIUS_SEARCH = process.env.RADIUS_SEARCH;
+const CURRENT_LOCATION_API_KEY = process.env.CURRENT_LOCATION_API_KEY;
 module.exports = {
   PORT,
   MONGO_DB_URL,
   GOOGLE_API_KEY,
-  RADIUS_SEARCH
+  RADIUS_SEARCH,
+  CURRENT_LOCATION_API_KEY
 };

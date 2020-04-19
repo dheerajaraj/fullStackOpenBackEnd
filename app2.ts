@@ -1,18 +1,20 @@
-const express = require("express");
+import express from "express";
 const app = express();
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const blogRouter = require("./controllers/BlogRouter");
-const mongoose = require("mongoose");
-const middleware = require("./utils/middleware");
-const config = require("./utils/config");
-const usersRouter = require("./controllers/UserRouter");
-const geoRouter = require("./controllers/GeolocationController");
-const loginRouter = require("./controllers/login");
+import bodyParser from "body-parser";
+import cors from "cors";
+import blogRouter from "./controllers/BlogRouter";
+import mongoose from "mongoose";
+import middleware from "./utils/middleware";
+import config from "./utils/config";
+import usersRouter from "./controllers/UserRouter";
+import geoRouter from "./controllers/GeolocationController";
+import loginRouter from "./controllers/login";
 const url = config.MONGO_DB_URL;
-const MenuController = require("./controllers/MenuController.ts");
-var morgan = require("morgan");
+import MenuController from "./controllers/MenuController.ts";
+import RestaurantController from "./controllers/RestaurantController.ts";
+import morgan from "morgan";
 var menuController = new MenuController();
+var restaurantController = new RestaurantController();
 mongoose
   .connect(url, { useNewUrlParser: true })
   .then(result => {
@@ -44,9 +46,10 @@ app.use(middleware.tokenExtractor);
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/blogs", blogRouter);
-app.use("/", menuController);
+app.use("/", menuController.menuRouter);
+app.use("/", restaurantController.restRouter);
 app.use("/api/geo", geoRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
-module.exports = app;
+export default app;
