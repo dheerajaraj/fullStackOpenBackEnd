@@ -10,6 +10,14 @@ const restSchema = new mongoose.Schema({
       "Restaurant name already exists! You have already registered with us."
     ]
   },
+  place_id: {
+    type: String,
+    required: [true, "You need the google place_id for the restaurant!"],
+    unique: [
+      true,
+      "Restaurant already exists! You have already registered with us."
+    ]
+  },
   restRatings: {
     type: Number,
     required: false

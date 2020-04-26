@@ -3,6 +3,7 @@ const geoService = require("../Services/GeolocationService");
 
 geoRouter.get("/", async (req, res) => {
   const result = await geoService.getNearbyRestaurants();
+  //console.log(result);
   res.json(result);
 });
 

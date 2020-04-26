@@ -16,7 +16,7 @@ class MenuController {
 
   public initializeRouters() {
     this.menuRouter.get(this.path, this.getAllDishes);
-    this.menuRouter.get(this.path + "/:id", this.getAllDishes);
+    this.menuRouter.get(this.path + "/:id", this.getDishById);
     this.menuRouter.post(this.path, this.addNewDishToMenu);
     this.menuRouter.put(this.path, this.updateDishById);
     this.menuRouter.delete(this.path + "/:id", this.deleteDishById);

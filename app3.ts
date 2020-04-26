@@ -2,28 +2,12 @@ import express from "express";
 const app = express();
 import bodyParser from "body-parser";
 import cors from "cors";
-import blogRouter from "./controllers/BlogRouter";
 import mongoose from "mongoose";
 import middleware from "./utils/middleware";
 import config from "./utils/config";
-import usersRouter from "./controllers/UserRouter";
-import geoRouter from "./controllers/GeolocationController";
 import loginRouter from "./controllers/login";
 const url = config.MONGO_DB_URL;
-import MenuController from "./controllers/MenuController.ts";
-import RestaurantController from "./controllers/RestaurantController.ts";
 import morgan from "morgan";
-var menuController = new MenuController();
-var restaurantController = new RestaurantController();
-import fns from "./Services/OrderConsumerService";
-
-require("amqplib/callback_api").connect(
-  "amqp://sqkuhegd:RZNx8RNIKSJjrWwmKk8OmzQ60kCRZ2Zn@gull.rmq.cloudamqp.com/sqkuhegd",
-  function(err, conn) {
-    if (err != null) fns.bail(err);
-    fns.consumer(conn);
-  }
-);
 
 mongoose
   .connect(url, { useNewUrlParser: true })
@@ -53,12 +37,9 @@ app.use(
 );
 
 app.use(middleware.tokenExtractor);
-app.use("/api/login", loginRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/blogs", blogRouter);
-app.use("/", menuController.menuRouter);
-app.use("/", restaurantController.restRouter);
-app.use("/api/geo", geoRouter);
+//app.use("/", menuController.menuRouter);
+//app.use("/", restaurantController.restRouter);
+//app.use("/api/geo", geoRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 

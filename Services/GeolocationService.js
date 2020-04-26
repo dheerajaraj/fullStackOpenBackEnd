@@ -5,14 +5,16 @@ const axios = require("axios");
 const NodeGeocoder = require("node-geocoder");
 const navigator = require("web-midi-api");
 const IPGeolocationAPI = require("ip-geolocation-api-javascript-sdk");
-const ipgeolocationApi = new IPGeolocationAPI(
-  config.CURRENT_LOCATION_API_KEY,
-  false
-);
-global.nearbyRestaurants;
+
 const getNearbyRestaurants = async () => {
-  await ipgeolocationApi.getGeolocation(getRestaurantData);
-  console.log(nearbyRestaurants);
+  const currentLocResult = await axios.post(
+    "http://api.ipstack.com/27.125.155.33?access_key=" +
+      config.CURRENT_LOCATION_API_KEY
+  );
+  console.log(currentLocResult);
+  const nearbyRestaurants = await getRestaurantData(currentLocResult.data);
+  let place_id = nearbyRestaurants.results.map(rest => rest.place_id);
+  console.log(place_id);
   return nearbyRestaurants;
 };
 
@@ -35,7 +37,7 @@ const getRestaurantData = async result => {
     null,
     nearbyRequestParams
   );
-  nearbyRestaurants = response.data;
+  return response.data;
 };
 
 module.exports = {

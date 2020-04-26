@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index2.ts",
+    "start": "node index.js",
     "watch": "NODE_ENV=development nodemon index.js",
     "build:ui": "rm -rf build && cd ../appeng/ && npm run build --prod && cp -r build ../fullStackOpenBackEnd/build",
     "deploy": "git push heroku master",
@@ -14,7 +14,9 @@
     "lint": "eslint --ext .ts .",
     "ts-node": "ts-node",
     "tsc": "tsc",
-    "dev": "ts-node-dev index2.ts"
+    "dev": "ts-node-dev index2.ts",
+    "recvOrder": "ts-node-dev index3.ts",
+    "sendOrder": "ts-node-dev index4.ts"
   },
   "author": "",
   "license": "ISC",

@@ -12,7 +12,8 @@ class RestaurantRepo implements RestaurantAccessInterface {
   async addNewRest(rest: any): Promise<Object> {
     const newRest = new Restaurant({
       restName: rest.restName,
-      restRatings: rest.restRatings ? rest.restRatings : 0
+      restRatings: rest.restRatings ? rest.restRatings : 0,
+      place_id: rest.place_id
     });
     const savedRest = await newRest.save();
     return savedRest.toJSON();

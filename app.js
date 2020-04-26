@@ -10,9 +10,7 @@ const usersRouter = require("./controllers/UserRouter");
 const geoRouter = require("./controllers/GeolocationController");
 const loginRouter = require("./controllers/login");
 const url = config.MONGO_DB_URL;
-const MenuController = require("./controllers/MenuController.ts");
 var morgan = require("morgan");
-var menuController = new MenuController();
 mongoose
   .connect(url, { useNewUrlParser: true })
   .then(result => {
@@ -44,7 +42,6 @@ app.use(middleware.tokenExtractor);
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/blogs", blogRouter);
-app.use("/", menuController);
 app.use("/api/geo", geoRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
