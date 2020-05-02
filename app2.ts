@@ -15,15 +15,6 @@ import RestaurantController from "./controllers/RestaurantController.ts";
 import morgan from "morgan";
 var menuController = new MenuController();
 var restaurantController = new RestaurantController();
-import fns from "./Services/OrderConsumerService";
-
-require("amqplib/callback_api").connect(
-  "amqp://sqkuhegd:RZNx8RNIKSJjrWwmKk8OmzQ60kCRZ2Zn@gull.rmq.cloudamqp.com/sqkuhegd",
-  function(err, conn) {
-    if (err != null) fns.bail(err);
-    fns.consumer(conn);
-  }
-);
 
 mongoose
   .connect(url, { useNewUrlParser: true })

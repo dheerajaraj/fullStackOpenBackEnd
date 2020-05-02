@@ -1,3 +1,4 @@
+//This is the client side application. You use this to send data.
 import express from "express";
 const app = express();
 import bodyParser from "body-parser";
