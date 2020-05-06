@@ -1,4 +1,4 @@
-import OrderPrep from "../models/OrderPrep";
+import OrderPrep from "../../models/OrderPrep";
 var ObjectId = require("mongodb").ObjectID;
 import OrderUpdateInterface from "./OrderUpdateInterface";
 

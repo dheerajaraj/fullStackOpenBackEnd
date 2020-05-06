@@ -1,101 +1,79 @@
-import OrderPrep from "../models/OrderPrep";
+import OrderPrep from "../../models/OrderPrep";
 const orderqueue = require("amqplib/callback_api");
 import OrderAccessInterface from "./OrderAccessInterface";
 import config from "../../utils/config";
+var ObjectId = require("mongodb").ObjectID;
 
 class OrderConsumerService implements OrderAccessInterface {
-  private savedOrderFromDb: Object;
-
-  private getSavedOrderFromDb(): Object {
-    return this.savedOrderFromDb;
-  }
-
-  private setSavedOrderFromDb(savedOrder: Object) {
-    this.savedOrderFromDb = savedOrder;
-  }
-  // create and process order
-  async saveOrderForPreparation(): Promise<Object> {
-    orderqueue.connect(config.MSG_QUEUE, function(err, conn) {
-      if (err != null) bail(err);
-      let savedOrder = await consumeOrderFromQueue(conn);
-      setSavedOrderFromDb(savedOrder);
-    });
-    return await getSavedOrderFromDb();
-  }
-
   bail(err) {
     console.error(err);
     process.exit(1);
   }
 
-  async consumeOrderFromQueue(conn): Object {
-    var ok = conn.createChannel(on_open);
-    function on_open(err, ch) {
-      if (err != null) bail(err);
-      ch.assertQueue("tasks");
-      ch.consume("tasks", function(order) {
-        if (order !== null) {
-          console.log(order.content.toString());
-          var myorder = order.content;
-          const orderPrep = new OrderPrep({
-            restId: myorder.restId,
-            menuIds: myorder.menuIds,
-            totalPrice: myorder.totalPrice,
-            isPrepared: false,
-            isDelivered: false
-          });
-          const savedOrder = await orderPrep.save();
-          publishOrderToPrepQueue(savedOrder);
-          ch.ack(order);
-          return savedOrder.toJSON();
-        }
-      });
-    }
-  }
-
-  publishOrderToPrepQueue(order: Object) {
+  // create and process order
+  async saveOrderForPreparation(): Promise<Object> {
     orderqueue.connect(config.MSG_QUEUE, function(err, conn) {
       if (err != null) bail(err);
-      publishToPrepQueue(conn, JSON.stringify(order));
+      var ok = conn.createChannel(on_open);
+      function on_open(err, ch, flag) {
+        if (err != null) bail(err);
+        ch.assertQueue("tasks");
+        console.log("flag: ");
+        console.log(flag);
+        ch.consume("tasks", function(order) {
+          if (order !== null) {
+            console.log(order.content.toString());
+            var myorder = JSON.parse(order.content.toString());
+            const orderPrep = new OrderPrep({
+              restId: myorder.restId,
+              menuIds: myorder.menuIds,
+              totalPrice: myorder.totalPrice,
+              isPrepared: false,
+              isDelivered: false
+            });
+            orderPrep.save().then(savedOrder => {
+              console.log("saved!");
+              console.log(savedOrder);
+              ch.ack(order);
+            });
+          }
+        });
+      }
     });
   }
 
-  publishToPrepQueue(conn, order: string) {
-    conn.createChannel(on_open);
-    function on_open(err, ch) {
+  async getAllDishesYetToBePrepared(): Promise<Object> {
+    let dishesToBePrepared = await OrderPrep.find({ isPrepared: false }).sort({
+      timeStamp: "descending"
+    });
+    return dishesToBePrepared;
+  }
+
+  async updateDishToPrepared(id): Promise<Object> {
+    let updatedDish = await OrderPrep.update(
+      { _id: ObjectId(id) },
+      {
+        isPrepared: true
+      }
+    );
+    orderqueue.connect(config.MSG_QUEUE, function(err, conn) {
       if (err != null) bail(err);
-      ch.assertQueue("prepQueue");
-      ch.sendToQueue("prepQueue", Buffer.from(JSON.stringify(order)));
-    }
+      function publishDelivery(conn, id) {
+        var ok = conn.createChannel(on_open);
+        function on_open(err, ch) {
+          if (err != null) bail(err);
+          ch.assertQueue("prepQueue");
+          ch.sendToQueue("prepQueue", Buffer.from(result));
+        }
+      }
+    });
+    return updatedDish;
   }
 
   // read order
   async getOrderById(id: string): Promise<Object> {
     const selectedOrder = await OrderPrep.findById(id);
     return selectedOrder.toJSON();
-  }
-
-  consumeFromPreparation(): Object {
-    orderqueue.connect(config.MSG_QUEUE, function(err, conn) {
-      if (err != null) bail(err);
-      consumeFromPreparationAndPublishToDeliveryQueue(conn);
-    });
-  }
-
-  //Delivery Queue is yet to be implemented.
-  consumeFromPreparationAndPublishToDeliveryQueue(conn): Object {
-    var ok = conn.createChannel(on_open);
-    function on_open(err, ch) {
-      if (err != null) bail(err);
-      ch.assertQueue("prepQueue");
-      ch.consume("prepQueue", function(order) {
-        if (order !== null) {
-          console.log(order.content.toString());
-          ch.ack(order);
-          return order.content;
-        }
-      });
-    }
   }
 }
 

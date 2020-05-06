@@ -21,7 +21,8 @@ const orderPrepSchema = new mongoose.Schema({
   isDelivered: {
     type: Boolean,
     required: true
-  }
+  },
+  timeStamp: { type: Date, default: Date.now }
 });
 
 orderPrepSchema.set("toJSON", {

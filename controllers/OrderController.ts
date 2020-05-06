@@ -1,7 +1,8 @@
 import express, { Application, Request, Response } from "express";
 const callback_api = require("amqplib/callback_api");
-import publishToQueue from "../Services/OrderProducerService";
+import fns from "../Services/OrderProducerService";
 import RestaurantReadRepo from "./RestaurantReadRepo";
+import config from "../utils/config";
 
 class OrderController {
   public orderRouter = express.Router();
@@ -20,7 +21,7 @@ class OrderController {
     if (restaurant && restaurant.placeId == req.placeId) {
       callback_api.connect(config.MSG_QUEUE, function(err, conn) {
         if (err != null) fns.bail(err);
-        publishToQueue(conn, JSON.stringify(req.body));
+        fns.publishToQueue(conn, JSON.stringify(req.body));
       });
       res.status(200).end();
     } else {

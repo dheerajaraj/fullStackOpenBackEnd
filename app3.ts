@@ -6,8 +6,17 @@ import mongoose from "mongoose";
 import middleware from "./utils/middleware";
 import config from "./utils/config";
 import loginRouter from "./controllers/login";
-const url = config.MONGO_DB_URL;
 import morgan from "morgan";
+import OrderPrepController from "./controllers/OrderPrepController";
+import OrderPrep from "./models/OrderPrep";
+import MenuController from "./controllers/MenuController.ts";
+import RestaurantController from "./controllers/RestaurantController.ts";
+
+const url = config.MONGO_DB_URL;
+const orderqueue = require("amqplib/callback_api");
+let orderPrepController = new OrderPrepController();
+let menuController = new MenuController();
+let restaurantController = new RestaurantController();
 
 mongoose
   .connect(url, { useNewUrlParser: true })
@@ -37,9 +46,9 @@ app.use(
 );
 
 app.use(middleware.tokenExtractor);
-//app.use("/", menuController.menuRouter);
-//app.use("/", restaurantController.restRouter);
-//app.use("/api/geo", geoRouter);
+app.use("/", orderPrepController.prepRouter);
+app.use("/", menuController.menuRouter);
+app.use("/", restaurantController.restRouter);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 

@@ -14,4 +14,4 @@ const publishToQueue = (conn, result) => {
   }
 };
 
-export default publishToQueue;
+export default { publishToQueue, bail };
