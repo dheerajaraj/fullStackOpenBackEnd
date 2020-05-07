@@ -36,15 +36,10 @@ class OrderPrepController {
 
   setDishToPreparedStatus = async (req: Request, res: Response) => {
     const id = req.params.id;
-    let updatedDish = await this.orderPrepRepo.updateDishToPrepared(id);
+    let updatedDish = await this.orderUpdateRepo.updateOrderPreparationStatus(
+      id
+    );
     res.json(updatedDish);
-  };
-
-  markOrderAsPrepared = async (res: Response) => {
-    const savedOrder = this.orderPrepRepo.consumeFromPreparation();
-    savedOrder.isPrepared = true;
-    const updatedOrder = await this.orderUpdateRepo.updateOrder();
-    res.json(updatedOrder);
   };
 }
 

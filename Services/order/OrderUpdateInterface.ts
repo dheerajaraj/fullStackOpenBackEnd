@@ -1,3 +1,4 @@
 export interface OrderUpdateInterface {
-  updateOrder(order: any, orderId: string): Promise<Object>;
+  updateOrderPreparationStatus(orderId: string): Promise<Object>;
+  updateOrderDeliveryStatus(id: String): Promise<Object>;
 }

@@ -49,27 +49,6 @@ class OrderConsumerService implements OrderAccessInterface {
     return dishesToBePrepared;
   }
 
-  async updateDishToPrepared(id): Promise<Object> {
-    let updatedDish = await OrderPrep.update(
-      { _id: ObjectId(id) },
-      {
-        isPrepared: true
-      }
-    );
-    orderqueue.connect(config.MSG_QUEUE, function(err, conn) {
-      if (err != null) bail(err);
-      function publishDelivery(conn, id) {
-        var ok = conn.createChannel(on_open);
-        function on_open(err, ch) {
-          if (err != null) bail(err);
-          ch.assertQueue("prepQueue");
-          ch.sendToQueue("prepQueue", Buffer.from(result));
-        }
-      }
-    });
-    return updatedDish;
-  }
-
   // read order
   async getOrderById(id: string): Promise<Object> {
     const selectedOrder = await OrderPrep.findById(id);
