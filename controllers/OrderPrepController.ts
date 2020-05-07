@@ -29,17 +29,25 @@ class OrderPrepController {
     res.json();
   };
 
-  findAllDishesToBePrepared = async (req: Request, res: Response) => {
+  findAllOrderToBePrepared = async (req: Request, res: Response) => {
     let dishesToPrepare = await this.orderPrepRepo.getAllDishesYetToBePrepared();
     res.json(dishesToPrepare);
   };
 
-  setDishToPreparedStatus = async (req: Request, res: Response) => {
+  setOrderToPreparedStatus = async (req: Request, res: Response) => {
     const id = req.params.id;
     let updatedDish = await this.orderUpdateRepo.updateOrderPreparationStatus(
       id
     );
     res.json(updatedDish);
+  };
+
+  retrieveAllOrdersPreparedButUndelivered = async (
+    req: Request,
+    res: Response
+  ) => {
+    let dishesToBeDelivered = await this.orderPrepRepo.getAllDishesYetToBeDelivered();
+    return dishesToBeDelivered;
   };
 }
 

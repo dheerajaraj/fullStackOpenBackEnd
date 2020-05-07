@@ -17,6 +17,7 @@ class DeliveryController {
     this.deliveryRouter(this.path, this.getAllDeliveryPeople);
     this.deliveryRouter(this.path + "/:id", this.getDeliveryPersonById);
     this.deliveryRouter(this.path, this.addNewDeliveryPerson);
+    this.deliveryRouter(this.path, this.updateOrderDeliveryStatus);
   }
 
   getAllDeliveryPeople = async (req: Request, res: Response) => {
@@ -40,7 +41,7 @@ class DeliveryController {
     res.json(deliveryPerson);
   };
 
-  updateOrderStatus = async (req: Request, res: Response) => {
+  updateOrderDeliveryStatus = async (req: Request, res: Response) => {
     let update = req.body;
     if (!update.driverId || !update.orderId) {
       res.status(404).send({ error: "Bad Request! Cannot update" });

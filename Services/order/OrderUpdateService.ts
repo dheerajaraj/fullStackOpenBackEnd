@@ -19,17 +19,6 @@ class OrderUpdateService implements OrderUpdateInterface {
         isPrepared: true
       }
     );
-    orderqueue.connect(config.MSG_QUEUE, function(err, conn) {
-      if (err != null) bail(err);
-      function publishDelivery(conn, id) {
-        var ok = conn.createChannel(on_open);
-        function on_open(err, ch) {
-          if (err != null) bail(err);
-          ch.assertQueue("prepQueue");
-          ch.sendToQueue("prepQueue", Buffer.from(result));
-        }
-      }
-    });
     return updatedDish;
   }
 }

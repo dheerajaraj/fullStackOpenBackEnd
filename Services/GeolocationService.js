@@ -5,6 +5,7 @@ const axios = require("axios");
 const NodeGeocoder = require("node-geocoder");
 const navigator = require("web-midi-api");
 const IPGeolocationAPI = require("ip-geolocation-api-javascript-sdk");
+const RestaurantRepo = require("../controllers/RestaurantRepo");
 
 const getNearbyRestaurants = async () => {
   const currentLocResult = await axios.post(
@@ -16,6 +17,25 @@ const getNearbyRestaurants = async () => {
   let place_id = nearbyRestaurants.results.map(rest => rest.place_id);
   console.log(place_id);
   return nearbyRestaurants;
+};
+
+const getNearbyRegisteredRestaurants = async () => {
+  const currentLocResult = await axios.post(
+    "http://api.ipstack.com/27.125.155.33?access_key=" +
+      config.CURRENT_LOCATION_API_KEY
+  );
+  console.log(currentLocResult);
+  const nearbyRestaurants = await getRestaurantData(currentLocResult.data);
+  let restaurantsRegistered = await RestaurantRepo.getAllRestaurants();
+  let restaurantsRegisteredPlaceId = restaurantsRegistered.map(
+    rest => rest.place_id
+  );
+  let restaurantsRegisteredSet = new Set(restaurantsRegisteredPlaceId);
+  let restaurantsRegisted = nearbyRestaurants.filter(restaurant => {
+    return restaurantsRegisteredSet.has(restaurant.place_id);
+  });
+  console.log(restaurantsRegisted);
+  return restaurantsRegisted;
 };
 
 const getRestaurantData = async result => {

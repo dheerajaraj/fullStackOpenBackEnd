@@ -49,6 +49,16 @@ class OrderConsumerService implements OrderAccessInterface {
     return dishesToBePrepared;
   }
 
+  async getAllDishesYetToBeDelivered(): Promise<Object> {
+    let dishesToBeDelivered = await OrderPrep.find({
+      isPrepared: true,
+      isDeliverd: false
+    }).sort({
+      timeStamp: "descending"
+    });
+    return dishesToBeDelivered;
+  }
+
   // read order
   async getOrderById(id: string): Promise<Object> {
     const selectedOrder = await OrderPrep.findById(id);
