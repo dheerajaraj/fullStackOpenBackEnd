@@ -19,9 +19,9 @@ class OrderPrepController {
     this.prepRouter.post(this.path, this.sendOrderToPreparation);
     this.prepRouter.get(
       this.path + "/toPrepare",
-      this.findAllDishesToBePrepared
+      this.findAllOrderToBePrepared
     );
-    this.prepRouter.put(this.path + "/:id", this.setDishToPreparedStatus);
+    this.prepRouter.put(this.path + "/:id", this.setOrderToPreparedStatus);
   }
 
   sendOrderToPreparation = async (req: Request, res: Response) => {
