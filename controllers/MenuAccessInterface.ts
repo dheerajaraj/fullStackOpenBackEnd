@@ -4,4 +4,5 @@ export interface MenuAccessInterface {
   updateDish(dish: object, menuId: string): Promise<Object>;
   deleteDish(id: string): void;
   getAllDish(): Promise<Object>;
+  getAllMenuByRestId(restId: string): Promise<Object>;
 }

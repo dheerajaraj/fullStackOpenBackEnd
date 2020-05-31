@@ -20,6 +20,7 @@ class MenuController {
     this.menuRouter.post(this.path, this.addNewDishToMenu);
     this.menuRouter.put(this.path, this.updateDishById);
     this.menuRouter.delete(this.path + "/:id", this.deleteDishById);
+    this.menuRouter.get(this.path+"/:restId", this.getAllMenuByRestId)
   }
 
   getAllDishes = async (req: Request, res: Response) => {
@@ -58,6 +59,12 @@ class MenuController {
     await this.menuRepo.deleteDish(id);
     res.status(204).end();
   };
+
+  getAllMenuByRestId = async (req: Request, res: Response) => {
+    const restId = req.params.restId;
+    const allMenuForRest = await this.menuRepo.getAllMenuByRestId(restId);
+    res.json(allMenuForRest);
+  }
 }
 
 export default MenuController;

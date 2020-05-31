@@ -34,6 +34,11 @@ class MenuRepo implements MenuAccessInterface {
   async deleteDish(id: string) {
     await Menu.findByIdAndDelete(id);
   }
+
+  async getAllMenuByRestId(restId: string): Promise<Object> {
+    const allMenuForRest = await Menu.find({ restId: ObjectId(restId) });
+    return allMenuForRest;
+  }
 }
 
 export default MenuRepo;
