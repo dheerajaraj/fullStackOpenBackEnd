@@ -7,18 +7,30 @@ import {
   Link,
   useRouteMatch,
 } from "react-router-dom";
-import { notEqual } from "assert";
+import RestaurantDisplay from "./components/RestaurantDisplay";
+import MenuDisplay from "./components/MenuDisplay";
+import Home from "./components/Home";
 
 const App = () => {
+  const [restSelection, setRestSelection] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
   const padding = {
     padding: 5,
   };
-  const match = useRouteMatch("/menu/:id");
-  const menu = match
-    ? menus.find((menu) => menu.id === Number(match.params.id))
-    : null;
+
+  const ErrorMessage = () => {
+    if (errorMessage === "") return <div></div>;
+    return (
+      <div className="error">
+        <p>{errorMessage}</p>
+      </div>
+    );
+  };
 
   return (
+    <div>
+      <ErrorMessage />
+      </div>
     <Router>
       <div>
         <Link style={padding} to="/">
@@ -27,23 +39,25 @@ const App = () => {
         <Link style={padding} to="/restaurant">
           restaurant
         </Link>
-        <Link style={padding} to="/menu">
-          Menu
-        </Link>
-        <Link style={padding} to="/orders">
-          Menu
-        </Link>
+        {restSelection.id ? (
+          <Link style={padding} to="/menu">
+            Menu
+          </Link>
+        ) : (
+          <p></p>
+        )}
       </div>
 
       <Switch>
         <Route path="/restaurant">
-          <RestaurantDisplay />
+          <RestaurantDisplay setRestSelection={setRestSelection} />
         </Route>
-        <Route path="/menu">
-          <MenuDisplay menu={menu}/>
-        </Route>
-        <Route path="/orders">
-          <OrderDisplay />
+        <Route path="/menu:restId">
+          {restSelection.id ? (
+            <MenuDisplay rest={restSelection} setErrorMessage={setErrorMessage}/>
+          ) : (
+            <Redirect to="/" />
+          )}
         </Route>
         <Route path="/">
           <Home />

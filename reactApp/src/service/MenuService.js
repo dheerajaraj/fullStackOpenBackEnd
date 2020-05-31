@@ -1,7 +1,7 @@
 import axios from "axios";
 const baseUrl = "localhost:3004/api/menu";
 
-const getMenuById = async menuId => {
-    const menu = await axios.get(baseUrl+"/"+menuId);
+const getMenuByRestId = async restId => {
+    const menu = await axios.get(baseUrl+"/"+restId);
     return menu; 
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import RestaurantService from "../service/RestaurantService";
-
+import Link from "react-router-dom";
+ 
 const client = () => {
   const [restaurantList, setRestaurantList] = useState([]);
-  const [selection, setSelection] = useState("");
 
   useEffect(() => {
     RestaurantService.getAllRestaurants().then((response) => {
@@ -19,10 +19,14 @@ const client = () => {
     marginBottom: 5,
   };
 
+  const handleRestaurantSelect = (rest)=>{
+    this.props.setRestSelection(rest);
+  }
+
   const displayRestDetails = (rest) => {
     return (
       <div>
-        <Link to="/menu">
+        <Link to={`/menu/${rest.id}`} onClick={handleRestaurantSelect.bind(this,rest)}>
           <figure>
             <picture />
             <figcaption>
