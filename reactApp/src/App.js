@@ -29,9 +29,8 @@ const App = () => {
 
   return (
     <div>
-      <ErrorMessage />
-      </div>
     <Router>
+      <ErrorMessage />
       <div>
         <Link style={padding} to="/">
           home
@@ -64,6 +63,7 @@ const App = () => {
         </Route>
       </Switch>
     </Router>
+    </div>
   );
 };
 
