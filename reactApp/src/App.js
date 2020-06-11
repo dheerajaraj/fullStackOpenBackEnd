@@ -5,11 +5,13 @@ import {
   Switch,
   Route,
   Link,
-  useRouteMatch,
+  Redirect,
 } from "react-router-dom";
 import RestaurantDisplay from "./components/RestaurantDisplay";
 import MenuDisplay from "./components/MenuDisplay";
 import Home from "./components/Home";
+import { initializeRestaurants } from "./reducers/RestReducer";
+import { useDispatch } from "react-redux";
 
 const App = () => {
   const [restSelection, setRestSelection] = useState({});
@@ -17,6 +19,11 @@ const App = () => {
   const padding = {
     padding: 5,
   };
+
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    dispatch(initializeRestaurants())
+  }, [dispatch]);
 
   const ErrorMessage = () => {
     if (errorMessage === "") return <div></div>;
